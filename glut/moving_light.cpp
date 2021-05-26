@@ -3,26 +3,26 @@
 
 
 float yRot = 0;
-GLfloat light_position[4] = { 0,0,0,1 };        //¹âÎ»ÖÃ
-GLfloat light_diffuse[4] = { 1,0,1,1 };        //¹âµÄÂş·´É«
-GLfloat light_direction[4] = { -1, -2, -1, 1 };    //¹âÔ´¾Û¹âµÆ·½Ïò
-GLfloat light_change[3] = { 3,3,-1 };            //¹âÔ´ÒÆ¶¯Î»ÖÃ¡£
+GLfloat light_position[4] = { 0,0,0,1 };        //å…‰ä½ç½®
+GLfloat light_diffuse[4] = { 1,0,1,1 };        //å…‰çš„æ¼«åè‰²
+GLfloat light_direction[4] = { -1, -2, -1, 1 };    //å…‰æºèšå…‰ç¯æ–¹å‘
+GLfloat light_change[3] = { 3,3,-1 };            //å…‰æºç§»åŠ¨ä½ç½®ã€‚
 
 void display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    // Çå³şÑÕÉ«Êı¾İºÍÉî¶ÈÊı¾İ£¨ÇåÆÁ£©
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    // æ¸…æ¥šé¢œè‰²æ•°æ®å’Œæ·±åº¦æ•°æ®ï¼ˆæ¸…å±ï¼‰
     glColor3f(1.0, 1.0, 1.0);
-    glLoadIdentity();        //³õÊ¼±ä»»¾ØÕóÎªµ¥Î»¾ØÕó
+    glLoadIdentity();        //åˆå§‹å˜æ¢çŸ©é˜µä¸ºå•ä½çŸ©é˜µ
 
-    glTranslated(0, -1, -5);    //Æ½ÒÆ0,0,-5ÏòZ¸º·½ÏòÆ½ÒÆ5¸öµ¥Î»
+    glTranslated(0, -1, -5);    //å¹³ç§»0,0,-5å‘Zè´Ÿæ–¹å‘å¹³ç§»5ä¸ªå•ä½
 
-    glPushMatrix();        //Ñ¹Ëõ¾ØÕó£¬Éè¶¨¹âÔ´µÄÎ»ÖÃ
+    glPushMatrix();        //å‹ç¼©çŸ©é˜µï¼Œè®¾å®šå…‰æºçš„ä½ç½®
     glDisable(GL_LIGHTING);
-    glRotatef(yRot, 0, 1, 0);    //¹âÔ´µÄĞı×ª
-    glTranslatef(light_change[0], light_change[1], light_change[2]);    //¹âÔ´µÄÎ»ÖÃ
-    glTranslatef(light_position[0], light_position[1], light_position[2]);    //¹âÔ´Î»ÖÃ
+    glRotatef(yRot, 0, 1, 0);    //å…‰æºçš„æ—‹è½¬
+    glTranslatef(light_change[0], light_change[1], light_change[2]);    //å…‰æºçš„ä½ç½®
+    glTranslatef(light_position[0], light_position[1], light_position[2]);    //å…‰æºä½ç½®
 
-    glutSolidSphere(0.1, 4, 4);//ÀûÓÃ¿âº¯Êı»æÖÆÒ»¸ö°ë¾¶Îª1µÄÇòÌå¡£±íÊ¾¹âÔ´ÔÚÕâÀï
+    glutSolidSphere(0.1, 4, 4);//åˆ©ç”¨åº“å‡½æ•°ç»˜åˆ¶ä¸€ä¸ªåŠå¾„ä¸º1çš„çƒä½“ã€‚è¡¨ç¤ºå…‰æºåœ¨è¿™é‡Œ
     glEnable(GL_LIGHTING);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glPopMatrix();
@@ -31,77 +31,93 @@ void display(void)
     light_direction[2] = -light_change[2];
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glPopMatrix();        //¹âÔ´ÉèÖÃÍê±Ï
+    glPopMatrix();        //å…‰æºè®¾ç½®å®Œæ¯•
 
-    glPushMatrix();            //ÒªÈë¾ØÕó£¬»æÖÆµØÃæ
+    glPushMatrix();            //è¦å…¥çŸ©é˜µï¼Œç»˜åˆ¶åœ°é¢
     glBegin(GL_QUADS);
     glVertex3f(-3, 0, 3);
     glVertex3f(3, 0, 3);
     glVertex3f(3, 0, -3);
     glVertex3f(-3, 0, -3);
     glEnd();
-    glPopMatrix();            //µØÃæ»æÖÆÍê±Ï
+    glPopMatrix();            //åœ°é¢ç»˜åˆ¶å®Œæ¯•
 
-    glPushMatrix();            //Ñ¹Èë±ä»»¾ØÕóÄÇ
-    glutSolidSphere(1, 30, 30);//ÀûÓÃ¿âº¯Êı»æÖÆÒ»¸ö°ë¾¶Îª1µÄÇòÌå¡£
-    glPopMatrix();            //µ¯³ö¾ØÕó¡£
+    glPushMatrix();            //å‹å…¥å˜æ¢çŸ©é˜µé‚£
+    glutSolidSphere(1, 30, 30);//åˆ©ç”¨åº“å‡½æ•°ç»˜åˆ¶ä¸€ä¸ªåŠå¾„ä¸º1çš„çƒä½“ã€‚
+    glPopMatrix();            //å¼¹å‡ºçŸ©é˜µã€‚
 
-    glutSwapBuffers();            //½»»»»º³åÇø¡£ÏÔÊ¾Í¼ĞÎ
+    glutSwapBuffers();            //äº¤æ¢ç¼“å†²åŒºã€‚æ˜¾ç¤ºå›¾å½¢
 }
 
-//³õÊ¼»¯
+//åˆå§‹åŒ–
 void init(void)
 {
-    //srand(0);    Ëæ»úÖÖ×Ó
-    glClearColor(0.5, 0.5, 0.5, 0.0);    //ÇåÀíÑÕÉ«£¬ÎªºÚÉ«£¬£¨Ò²¿ÉÈÏÎªÊÇ±³¾°ÑÕÉ«£©
+    //srand(0);    éšæœºç§å­
+    glClearColor(0.5, 0.5, 0.5, 0.0);    //æ¸…ç†é¢œè‰²ï¼Œä¸ºé»‘è‰²ï¼Œï¼ˆä¹Ÿå¯è®¤ä¸ºæ˜¯èƒŒæ™¯é¢œè‰²ï¼‰
 
-    GLfloat light_param[] = { 1, 1, 1, 1.0 };    //³õÊ¼»¯¹â²ÎÊı¡£
-    //glLightfv(GL_LIGHT0, GL_AMBIENT, light_param);    //ÉèÖÃ¹âÎª»·¾³¹â¡£
-    //glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0); //ÉèÖÃ¾Û¹âµÄ·¶Î§Îª45¶È¡£
-    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0);    //ÉèÖÃ¾Û¹âµÆµÄ¾Û¹âÇ¿¶È¡£
+    GLfloat light_param[] = { 1, 1, 1, 1.0 };    //åˆå§‹åŒ–å…‰å‚æ•°ã€‚
+    //glLightfv(GL_LIGHT0, GL_AMBIENT, light_param);    //è®¾ç½®å…‰ä¸ºç¯å¢ƒå…‰ã€‚
+    //glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0); //è®¾ç½®èšå…‰çš„èŒƒå›´ä¸º45åº¦ã€‚
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0);    //è®¾ç½®èšå…‰ç¯çš„èšå…‰å¼ºåº¦ã€‚
 
-    glMaterialfv(GL_FRONT, GL_SPECULAR, light_param);    //ÉèÖÃ²ÄÖÊµÄÂş·´ÉäÊôĞÔ
-    //glMaterialfv(GL_FRONT, GL_AMBIENT, light_param);    //ÉèÖÃ²ÄÖÊµÄ»·¾³ÊôĞÔ
-    glMaterialf(GL_FRONT, GL_SHININESS, 64);    //ÉèÖÃ²ÄÖÊµÄ¸ß¹âÊôĞÔ
+    glMaterialfv(GL_FRONT, GL_SPECULAR, light_param);    //è®¾ç½®æè´¨çš„æ¼«åå°„å±æ€§
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, light_param);    //è®¾ç½®æè´¨çš„ç¯å¢ƒå±æ€§
+    glMaterialf(GL_FRONT, GL_SHININESS, 64);    //è®¾ç½®æè´¨çš„é«˜å…‰å±æ€§
 
 
-    glEnable(GL_LIGHTING);        //Æô¶¯¹âÕÕ
-    glEnable(GL_LIGHT0);        //Æô¶¯GL_LIGHTO¹â
-    glCullFace(GL_BACK);        //ÌŞ³ı±³Ãæ
-    glEnable(GL_CULL_FACE);        //Æô¶¯ÌŞ³ı
-    glDepthFunc(GL_LEQUAL);        //Éî¶È¼ì²âÎªĞ¡ÓÚµÈÓÚ
-    glEnable(GL_DEPTH_TEST);    //Æô¶¯Éî¶È¼ì²â
-    glFrontFace(GL_CCW);        //¶¨ÒåÄæÊ±ÕëÎªÕıÃæ
+    glEnable(GL_LIGHTING);        //å¯åŠ¨å…‰ç…§
+    glEnable(GL_LIGHT0);        //å¯åŠ¨GL_LIGHTOå…‰
+    glCullFace(GL_BACK);        //å‰”é™¤èƒŒé¢
+    glEnable(GL_CULL_FACE);        //å¯åŠ¨å‰”é™¤
+    glDepthFunc(GL_LEQUAL);        //æ·±åº¦æ£€æµ‹ä¸ºå°äºç­‰äº
+    glEnable(GL_DEPTH_TEST);    //å¯åŠ¨æ·±åº¦æ£€æµ‹
+    glFrontFace(GL_CCW);        //å®šä¹‰é€†æ—¶é’ˆä¸ºæ­£é¢
 
 }
 
-//µ±´°¿Ú´óĞ¡¸Ä±äÊ±£¬»áµ÷ÓÃÕâ¸öº¯Êı
 void reshape(GLsizei w, GLsizei h)
 {
-    //ÕâÀïĞ¡ËµÃ÷Ò»ÏÂ£º¾ØÕóÄ£Ê½ÊÇ²»Í¬µÄ£¬ËûÃÇ¸÷×ÔÓĞÒ»¸ö¾ØÕó¡£Í¶Ó°Ïà¹Ø
-    //Ö»ÄÜÓÃÍ¶Ó°¾ØÕó¡£(Ö»ÊÇÄ¿Ç°Çé¿öÏÂÅ¶£¬µÈÎÒÑ§¶àÁË¿ÉÄÜ¾ÍÖªµÀÎªÊ²Ã´ÁË¡£)
 
-    glViewport(0, 0, w, h);        //ÉèÖÃÊÓ¿Ú
-    glMatrixMode(GL_PROJECTION);    //ÉèÖÃ¾ØÕóÄ£Ê½ÎªÍ¶Ó°±ä»»¾ØÕó£¬
-    glLoadIdentity();                //±äÎªµ¥Î»¾ØÕó
-    gluPerspective(60, (GLfloat)w / h, 0, 1000);    //ÉèÖÃÍ¶Ó°¾ØÕó
-    //glOrtho(-6.0, 6.0, -6.0 * h / w, 6.0* h / w, -10, 10);    //ÎªÁË²»±äĞÎ£¬ÔòÒª³¤ºÍ¿í³É±ÈÀı
-    glMatrixMode(GL_MODELVIEW);        //ÉèÖÃ¾ØÕóÄ£Ê½ÎªÊÓÍ¼¾ØÕó(Ä£ĞÍ)
-    glLoadIdentity();                //±äÎªµ¥Î»¾ØÕó
+
+    glViewport(0, 0, w, h);        //è®¾ç½®è§†å£
+    glMatrixMode(GL_PROJECTION);    //è®¾ç½®çŸ©é˜µæ¨¡å¼ä¸ºæŠ•å½±å˜æ¢çŸ©é˜µï¼Œ
+    glLoadIdentity();                //å˜ä¸ºå•ä½çŸ©é˜µ
+    gluPerspective(60, (GLfloat)w / h, 0, 1000);    //è®¾ç½®æŠ•å½±çŸ©é˜µ
+    //glOrtho(-6.0, 6.0, -6.0 * h / w, 6.0* h / w, -10, 10);    //ä¸ºäº†ä¸å˜å½¢ï¼Œåˆ™è¦é•¿å’Œå®½æˆæ¯”ä¾‹
+    glMatrixMode(GL_MODELVIEW);        //è®¾ç½®çŸ©é˜µæ¨¡å¼ä¸ºè§†å›¾çŸ©é˜µ(æ¨¡å‹)
+    glLoadIdentity();                //å˜ä¸ºå•ä½çŸ©é˜µ
 }
 
 void Keyboard(unsigned char key, int x, int y)
 {
+     switch (key)
+    {
+    case 'w':
+        light_position[0] -= 5;
+        break;
+    case 'a':
+        light_position[0] += 5;
+        break;
+    case 's':
+        light_position[2] -= 5;
+        break;
+    case 'd':
+        light_position[2] += 5;
+        break;
+    case 27:     exit(0);
+    }
+    glutPostRedisplay();
+
 }
 
-//ÏĞÖÃº¯Êı£¬µ±Ö÷Ñ­»·¿ÕÏĞÊ±¾Í»áµ÷ÓÃÕâ¸öº¯Êı
+//é—²ç½®å‡½æ•°ï¼Œå½“ä¸»å¾ªç¯ç©ºé—²æ—¶å°±ä¼šè°ƒç”¨è¿™ä¸ªå‡½æ•°
 void MyIdle(void)
 {
    
 
  
-        yRot += 0.5f;    //Ğı×ª½Ç¶È
-        /*light_diffuse[0] = (rand() % 255) / 255.0;//Ì«»¨²»ÓÃÁË¡£
+        yRot += 0.5f;    //æ—‹è½¬è§’åº¦
+        /*light_diffuse[0] = (rand() % 255) / 255.0;
         light_diffuse[1] = (rand() % 255) / 255.0;
         light_diffuse[2] = (rand() % 255) / 255.0;*/
         glutPostRedisplay();
@@ -110,17 +126,17 @@ void MyIdle(void)
 
 int main(int argc, char** argv)
 {
-    glutInit(&argc, argv);        //Opnegl³õÊ¼»¯
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //ÉèÖÃÏÔÊ¾Ä£Ê½ÎªË«»º³å£¬RGEBA
+    glutInit(&argc, argv);        //Opneglåˆå§‹åŒ–
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); //è®¾ç½®æ˜¾ç¤ºæ¨¡å¼ä¸ºåŒç¼“å†²ï¼ŒRGEBA
 
-    glutInitWindowSize(800, 600);            //´°¿Ú´óĞ¡
-    glutInitWindowPosition(100, 100);        //´°¿ÚÎ»ÖÃ
-    glutCreateWindow("moving light");                //´´½¨Ò»¸ö±êÌâÎªhelloµÄ´°¿Ú
-    init();                                //³õÊ¼»¯×ÊÔ´,ÕâÀïÒ»¶¨ÒªÔÚ´´½¨´°¿ÚÒÔºó£¬²»È»»áÎŞĞ§¡£
-    glutDisplayFunc(display);                //´°¿Ú´óĞ¡¸Ä±äÊ±µÄ»Øµ÷
-    glutReshapeFunc(reshape);                //»æÖÆÍ¼ĞÎÊ±µÄ»Øµ÷
+    glutInitWindowSize(800, 600);            //çª—å£å¤§å°
+    glutInitWindowPosition(100, 100);        //çª—å£ä½ç½®
+    glutCreateWindow("moving light");                //åˆ›å»ºä¸€ä¸ªæ ‡é¢˜ä¸ºhelloçš„çª—å£
+    init();                                //åˆå§‹åŒ–èµ„æº,è¿™é‡Œä¸€å®šè¦åœ¨åˆ›å»ºçª—å£ä»¥åï¼Œä¸ç„¶ä¼šæ— æ•ˆã€‚
+    glutDisplayFunc(display);                //çª—å£å¤§å°æ”¹å˜æ—¶çš„å›è°ƒ
+    glutReshapeFunc(reshape);                //ç»˜åˆ¶å›¾å½¢æ—¶çš„å›è°ƒ
     glutKeyboardFunc(Keyboard);
     glutIdleFunc(MyIdle);
-    glutMainLoop();                            //Ö÷Ñ­»·¡£
+    glutMainLoop();                            //ä¸»å¾ªç¯ã€‚
     return 0;
 }

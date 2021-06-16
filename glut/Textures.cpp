@@ -1,19 +1,17 @@
-
 #define WindowWidth  400
 #define WindowHeight 400
-#define WindowTitle  "OpenGLÎÆÀí²âÊÔ"
+#define WindowTitle  "OpenGLçº¹ç†æµ‹è¯•"
 #include <stdio.h>
 #include <stdlib.h>
 #include <glut.h>
 
-//¶¨ÒåÁ½¸öÎÆÀí¶ÔÏó±àºÅ
-GLuint texGround;
-GLuint texWall;
+//å®šä¹‰ä¸¤ä¸ªçº¹ç†å¯¹è±¡ç¼–å·
+GLuint tex[6];
+const char* file_name[6] = { "111.bmp" ,"222.bmp","333.bmp","444.bmp" ,"555.bmp","666.bmp" };
+#define BMP_Header_Length 54  //å›¾åƒæ•°æ®åœ¨å†…å­˜å—ä¸­çš„åç§»é‡
+static GLfloat angle = 0.0f;   //æ—‹è½¬è§’åº¦
 
-#define BMP_Header_Length 54  //Í¼ÏñÊı¾İÔÚÄÚ´æ¿éÖĞµÄÆ«ÒÆÁ¿
-static GLfloat angle = 0.0f;   //Ğı×ª½Ç¶È
-
-// º¯Êıpower_of_twoÓÃÓÚÅĞ¶ÏÒ»¸öÕûÊıÊÇ²»ÊÇ2µÄÕûÊı´ÎÃİ
+// å‡½æ•°power_of_twoç”¨äºåˆ¤æ–­ä¸€ä¸ªæ•´æ•°æ˜¯ä¸æ˜¯2çš„æ•´æ•°æ¬¡å¹‚
 int power_of_two(int n)
 {
 	if (n <= 0)
@@ -21,28 +19,24 @@ int power_of_two(int n)
 	return (n & (n - 1)) == 0;
 }
 
-/* º¯Êıload_texture
-* ¶ÁÈ¡Ò»¸öBMPÎÄ¼ş×÷ÎªÎÆÀí
-* Èç¹ûÊ§°Ü£¬·µ»Ø0£¬Èç¹û³É¹¦£¬·µ»ØÎÆÀí±àºÅ
-*/
 GLuint load_texture(const char* file_name)
 {
 	GLint width, height, total_bytes;
 	GLubyte* pixels = 0;
 	GLuint last_texture_ID = 0, texture_ID = 0;
 
-	// ´ò¿ªÎÄ¼ş£¬Èç¹ûÊ§°Ü£¬·µ»Ø
+	// æ‰“å¼€æ–‡ä»¶ï¼Œå¦‚æœå¤±è´¥ï¼Œè¿”å›
 	FILE* pFile = fopen(file_name, "rb");
 	if (pFile == 0)
 		return 0;
 
-	// ¶ÁÈ¡ÎÄ¼şÖĞÍ¼ÏóµÄ¿í¶ÈºÍ¸ß¶È
+	// è¯»å–æ–‡ä»¶ä¸­å›¾è±¡çš„å®½åº¦å’Œé«˜åº¦
 	fseek(pFile, 0x0012, SEEK_SET);
 	fread(&width, 4, 1, pFile);
 	fread(&height, 4, 1, pFile);
 	fseek(pFile, BMP_Header_Length, SEEK_SET);
 
-	// ¼ÆËãÃ¿ĞĞÏñËØËùÕ¼×Ö½ÚÊı£¬²¢¸ù¾İ´ËÊı¾İ¼ÆËã×ÜÏñËØ×Ö½ÚÊı
+	// è®¡ç®—æ¯è¡Œåƒç´ æ‰€å å­—èŠ‚æ•°ï¼Œå¹¶æ ¹æ®æ­¤æ•°æ®è®¡ç®—æ€»åƒç´ å­—èŠ‚æ•°
 	{
 		GLint line_bytes = width * 3;
 		while (line_bytes % 4 != 0)
@@ -50,7 +44,7 @@ GLuint load_texture(const char* file_name)
 		total_bytes = line_bytes * height;
 	}
 
-	// ¸ù¾İ×ÜÏñËØ×Ö½ÚÊı·ÖÅäÄÚ´æ
+	// æ ¹æ®æ€»åƒç´ å­—èŠ‚æ•°åˆ†é…å†…å­˜
 	pixels = (GLubyte*)malloc(total_bytes);
 	if (pixels == 0)
 	{
@@ -58,7 +52,7 @@ GLuint load_texture(const char* file_name)
 		return 0;
 	}
 
-	// ¶ÁÈ¡ÏñËØÊı¾İ
+	// è¯»å–åƒç´ æ•°æ®
 	if (fread(pixels, total_bytes, 1, pFile) <= 0)
 	{
 		free(pixels);
@@ -66,8 +60,6 @@ GLuint load_texture(const char* file_name)
 		return 0;
 	}
 
-	// ¶Ô¾Í¾É°æ±¾µÄ¼æÈİ£¬Èç¹ûÍ¼ÏóµÄ¿í¶ÈºÍ¸ß¶È²»ÊÇµÄÕûÊı´Î·½£¬ÔòĞèÒª½øĞĞËõ·Å
-	// ÈôÍ¼Ïñ¿í¸ß³¬¹ıÁËOpenGL¹æ¶¨µÄ×î´óÖµ£¬Ò²Ëõ·Å
 	{
 		GLint max;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
@@ -77,17 +69,17 @@ GLuint load_texture(const char* file_name)
 			|| height > max)
 		{
 			const GLint new_width = 256;
-			const GLint new_height = 256; // ¹æ¶¨Ëõ·ÅºóĞÂµÄ´óĞ¡Îª±ß³¤µÄÕı·½ĞÎ
+			const GLint new_height = 256; // è§„å®šç¼©æ”¾åæ–°çš„å¤§å°ä¸ºè¾¹é•¿çš„æ­£æ–¹å½¢
 			GLint new_line_bytes, new_total_bytes;
 			GLubyte* new_pixels = 0;
 
-			// ¼ÆËãÃ¿ĞĞĞèÒªµÄ×Ö½ÚÊıºÍ×Ü×Ö½ÚÊı
+			// è®¡ç®—æ¯è¡Œéœ€è¦çš„å­—èŠ‚æ•°å’Œæ€»å­—èŠ‚æ•°
 			new_line_bytes = new_width * 3;
 			while (new_line_bytes % 4 != 0)
 				++new_line_bytes;
 			new_total_bytes = new_line_bytes * new_height;
 
-			// ·ÖÅäÄÚ´æ
+			// åˆ†é…å†…å­˜
 			new_pixels = (GLubyte*)malloc(new_total_bytes);
 			if (new_pixels == 0)
 			{
@@ -96,12 +88,12 @@ GLuint load_texture(const char* file_name)
 				return 0;
 			}
 
-			// ½øĞĞÏñËØËõ·Å
+			// è¿›è¡Œåƒç´ ç¼©æ”¾
 			gluScaleImage(GL_RGB,
 				width, height, GL_UNSIGNED_BYTE, pixels,
 				new_width, new_height, GL_UNSIGNED_BYTE, new_pixels);
 
-			// ÊÍ·ÅÔ­À´µÄÏñËØÊı¾İ£¬°ÑpixelsÖ¸ÏòĞÂµÄÏñËØÊı¾İ£¬²¢ÖØĞÂÉèÖÃwidthºÍheight
+
 			free(pixels);
 			pixels = new_pixels;
 			width = new_width;
@@ -109,7 +101,7 @@ GLuint load_texture(const char* file_name)
 		}
 	}
 
-	// ·ÖÅäÒ»¸öĞÂµÄÎÆÀí±àºÅ
+	// åˆ†é…ä¸€ä¸ªæ–°çš„çº¹ç†ç¼–å·
 	glGenTextures(1, &texture_ID);
 	if (texture_ID == 0)
 	{
@@ -118,8 +110,6 @@ GLuint load_texture(const char* file_name)
 		return 0;
 	}
 
-	// °ó¶¨ĞÂµÄÎÆÀí£¬ÔØÈëÎÆÀí²¢ÉèÖÃÎÆÀí²ÎÊı
-	// ÔÚ°ó¶¨Ç°£¬ÏÈ»ñµÃÔ­À´°ó¶¨µÄÎÆÀí±àºÅ£¬ÒÔ±ãÔÚ×îºó½øĞĞ»Ö¸´
 	GLint lastTextureID = last_texture_ID;
 	glGetIntegerv(GL_TEXTURE_BINDING_2D, &lastTextureID);
 	glBindTexture(GL_TEXTURE_2D, texture_ID);
@@ -130,7 +120,7 @@ GLuint load_texture(const char* file_name)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
 		GL_BGR_EXT, GL_UNSIGNED_BYTE, pixels);
-	glBindTexture(GL_TEXTURE_2D, lastTextureID);  //»Ö¸´Ö®Ç°µÄÎÆÀí°ó¶¨
+	glBindTexture(GL_TEXTURE_2D, lastTextureID);  //æ¢å¤ä¹‹å‰çš„çº¹ç†ç»‘å®š
 	free(pixels);
 	return texture_ID;
 }
@@ -138,62 +128,103 @@ GLuint load_texture(const char* file_name)
 
 void display(void)
 {
-	// Çå³ıÆÁÄ»
+	// æ¸…é™¤å±å¹•
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// ÉèÖÃÊÓ½Ç
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(75, 1, 1, 21);
+	gluPerspective(75,1, 2, 100);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(-4, 7, 7, 0, 0, 0, 0, 0, 1);
 
-	glRotatef(angle, 0.0f, 0.0f, 1.0f); //Ğı×ª
+	glRotatef(angle, 0.0f, 1.0f, 0.0f); //æ—‹è½¬
 
-	// »æÖÆµ×ÃæÒÔ¼°ÎÆÀí
-	glBindTexture(GL_TEXTURE_2D, texGround);
+	// ç»˜åˆ¶åº•é¢ä»¥åŠçº¹ç†
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-8.0f, -8.0f, 0.0f);
-	glTexCoord2f(0.0f, 3.0f); glVertex3f(-8.0f, 8.0f, 0.0f);
-	glTexCoord2f(3.0f, 3.0f); glVertex3f(8.0f, 8.0f, 0.0f);
-	glTexCoord2f(3.0f, 0.0f); glVertex3f(8.0f, -8.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
 	glEnd();
-	// »æÖÆÁ¢Ãæ
-	glBindTexture(GL_TEXTURE_2D, texWall);
+	// ç»˜åˆ¶ç«‹é¢
+	glBindTexture(GL_TEXTURE_2D, tex[1]);
 	glBegin(GL_QUADS);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-6.0f, -3.0f, 0.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-6.0f, -3.0f, 5.0f);
-	glTexCoord2f(2.0f, 1.0f); glVertex3f(6.0f, -3.0f, 5.0f);
-	glTexCoord2f(2.0f, 0.0f); glVertex3f(6.0f, -3.0f, 0.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
 	glEnd();
 
-
+	glBindTexture(GL_TEXTURE_2D, tex[2]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, tex[3]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, -1.0f, -1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, tex[4]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0f, -1.0f, 1.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, tex[5]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f);
+	glEnd();
 
 	glutSwapBuffers();
+
 }
 
 void myIdle(void)
 {
-	angle += 1.8f;
-	if (angle >= 360.0f)
-		angle = 0.0f;
-	display();
-}
+	angle += 0.5f;
 
+	glutPostRedisplay();
+}
+void reshape(GLsizei w, GLsizei h)
+{
+
+	glViewport(0, 0, w, h);        //è®¾ç½®è§†å£
+	glMatrixMode(GL_PROJECTION);    //è®¾ç½®çŸ©é˜µæ¨¡å¼ä¸ºæŠ•å½±å˜æ¢çŸ©é˜µï¼Œ
+	glLoadIdentity();                //å˜ä¸ºå•ä½çŸ©é˜µ
+	gluPerspective(60, (GLfloat)w / h, 0, 1000);    //è®¾ç½®æŠ•å½±çŸ©é˜µ
+	//glOrtho(-6.0, 6.0, -6.0 * h / w, 6.0* h / w, -10, 10);    //ä¸ºäº†ä¸å˜å½¢ï¼Œåˆ™è¦é•¿å’Œå®½æˆæ¯”ä¾‹
+	glMatrixMode(GL_MODELVIEW);        //è®¾ç½®çŸ©é˜µæ¨¡å¼ä¸ºè§†å›¾çŸ©é˜µ(æ¨¡å‹)
+	glLoadIdentity();
+}
 int main(int argc, char* argv[])
 {
-	// GLUT³õÊ¼»¯
+	// GLUTåˆå§‹åŒ–
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(WindowWidth, WindowHeight);
 	glutCreateWindow(WindowTitle);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);    // ÆôÓÃÎÆÀí
-	texGround = load_texture("ground2.bmp");  //¼ÓÔØÎÆÀí
-	texWall = load_texture("wall2.bmp");
-	glutDisplayFunc(&display);   //×¢²áº¯Êı 
+	glEnable(GL_TEXTURE_2D);    // å¯ç”¨çº¹ç†
+
+	for (int i = 0; i < 5; i++)
+	{
+		tex[i] = load_texture(file_name[i]);
+	}
+	//glutReshapeFunc(reshape);
+	glutDisplayFunc(&display); 
 	glutIdleFunc(&myIdle);
-	glutMainLoop(); //Ñ­»·µ÷ÓÃ
+	glutMainLoop(); 
 	return 0;
 }
